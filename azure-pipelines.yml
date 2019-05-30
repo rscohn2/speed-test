@@ -1,56 +1,32 @@
 variables:
   online_url: 'http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/15537/parallel_studio_xe_2019_update4_composer_edition_online.tgz'
   offline_url: 'http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/15537/parallel_studio_xe_2019_update4_composer_edition.tgz'
+  url: $(offline_url)
+  linux_python: 'python3'
+  windows_python: '/c/Miniconda/python'
+  windows_image: 'vs2017-win2016'
+  linux_image: 'ubuntu-latest'
 
 trigger:
 - master
 
-jobs:
-- job: curl
-  strategy:
-    matrix:
-      #linux_online:
-      #  imageName: 'ubuntu-latest'
-      #  python_bin: 'python3'
-      #  url:  $(online_url)
-      #windows_online:
-      #  imageName: 'vs2017-win2016'
-      #  python_bin: 'C:/Miniconda/python.exe'
-      #  url:  $(online_url)
-      linux_offline:
-        imageName: 'ubuntu-latest'
-        python_bin: 'python3'
-        url:  $(offline_url)
-      windows_offline:
-        imageName: 'vs2017-win2016'
-        python_bin: 'C:/Miniconda/python.exe'
-        url:  $(offline_url)
-  pool:
-    vmImage: $(imageName)
-  steps:
-  - bash: time curl -s -o x $(url)
-
-- job: python
-  strategy:
-    matrix:
-      #linux_online:
-      #  imageName: 'ubuntu-latest'
-      #  python_bin: 'python3'
-      #  url:  $(online_url)
-      #windows_online:
-      #  imageName: 'vs2017-win2016'
-      #  python_bin: 'C:/Miniconda/python.exe'
-      #  url:  $(online_url)
-      linux_offline:
-        imageName: 'ubuntu-latest'
-        python_bin: 'python3'
-        url:  $(offline_url)
-      windows_offline:
-        imageName: 'vs2017-win2016'
-        python_bin: 'C:/Miniconda/python.exe'
-        url:  $(offline_url)
-  pool:
-      vmImage: $(imageName)
-  steps:
-    - script: |
-        $(python_bin) speed-test.py --block-size 4 --request $(url)
+strategy:
+  matrix:
+    linux_curl:
+      imageName: $(linux_image)
+      cmd: curl -s -o x $(url)
+    windows_curl:
+      imageName: $(windows_image)
+      cmd: curl -s -o x $(url)
+    linux_python:
+      imageName: $(linux_image)
+      cmd: $(linux_python) speed-test.py --block-size 4 --request $(url)
+    windows_python:
+      imageName: $(windows_image)
+      cmd: $(windows_python) speed-test.py --block-size 4 --request $(url)
+pool:
+  vmImage: $(imageName)
+steps:
+- bash: \
+    time $(cmd)
+    ls -l
