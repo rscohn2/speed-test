@@ -55,7 +55,7 @@ def request(url, file, block_size):
         while True:
             chunk = response.read(block_size)
             if not chunk:
-                break;
+                break
             f.write(chunk)
 
 if __name__ == "__main__":
