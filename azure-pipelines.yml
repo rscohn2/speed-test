@@ -5,35 +5,52 @@ variables:
 trigger:
 - master
 
-strategy:
-  matrix:
-    #linux_online:
-    #  imageName: 'ubuntu-latest'
-    #  python_bin: 'python3'
-    #  url:  $(online_url)
-    #windows_online:
-    #  imageName: 'vs2017-win2016'
-    #  python_bin: 'C:/Miniconda/python.exe'
-    #  url:  $(online_url)
-    linux_offline:
-      imageName: 'ubuntu-latest'
-      python_bin: 'python3'
-      url:  $(offline_url)
-    windows_offline:
-      imageName: 'vs2017-win2016'
-      python_bin: 'C:/Miniconda/python.exe'
-      url:  $(offline_url)
-
-
-pool:
-  vmImage: $(imageName)
-
 jobs:
 - job: curl
+  strategy:
+    matrix:
+      #linux_online:
+      #  imageName: 'ubuntu-latest'
+      #  python_bin: 'python3'
+      #  url:  $(online_url)
+      #windows_online:
+      #  imageName: 'vs2017-win2016'
+      #  python_bin: 'C:/Miniconda/python.exe'
+      #  url:  $(online_url)
+      linux_offline:
+        imageName: 'ubuntu-latest'
+        python_bin: 'python3'
+        url:  $(offline_url)
+      windows_offline:
+        imageName: 'vs2017-win2016'
+        python_bin: 'C:/Miniconda/python.exe'
+        url:  $(offline_url)
+  pool:
+    vmImage: $(imageName)
   steps:
   - bash: time curl -s -o x $(url)
-      
+
 - job: python
+  strategy:
+    matrix:
+      #linux_online:
+      #  imageName: 'ubuntu-latest'
+      #  python_bin: 'python3'
+      #  url:  $(online_url)
+      #windows_online:
+      #  imageName: 'vs2017-win2016'
+      #  python_bin: 'C:/Miniconda/python.exe'
+      #  url:  $(online_url)
+      linux_offline:
+        imageName: 'ubuntu-latest'
+        python_bin: 'python3'
+        url:  $(offline_url)
+      windows_offline:
+        imageName: 'vs2017-win2016'
+        python_bin: 'C:/Miniconda/python.exe'
+        url:  $(offline_url)
+  pool:
+      vmImage: $(imageName)
   steps:
-  - script: |
-      $(python_bin) speed-test.py --block-size 4 --request $(url)
+    - script: |
+        $(python_bin) speed-test.py --block-size 4 --request $(url)
