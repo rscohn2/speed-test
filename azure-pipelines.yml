@@ -13,16 +13,16 @@ trigger:
 strategy:
   matrix:
     linux_curl:
-      imageName: $(linux_image)
+      imageName: 'ubuntu-latest'
       cmd: curl -s -o x $(url)
     windows_curl:
-      imageName: $(windows_image)
+      imageName: 'vs2017-win2016'
       cmd: curl -s -o x $(url)
     linux_python:
-      imageName: $(linux_image)
+      imageName: 'ubuntu-latest'
       cmd: $(linux_python) speed-test.py --block-size 4 --request $(url)
     windows_python:
-      imageName: $(windows_image)
+      imageName: 'vs2017-win2016'
       cmd: $(windows_python) speed-test.py --block-size 4 --request $(url)
 pool:
   vmImage: $(imageName)
