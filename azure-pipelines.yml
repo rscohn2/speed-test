@@ -27,6 +27,6 @@ strategy:
 pool:
   vmImage: $(imageName)
 steps:
-- bash: \
+- bash: |
     time $(cmd)
     ls -l
