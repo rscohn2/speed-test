@@ -8,6 +8,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('urls',metavar='URL',nargs='+', help='URL to download')
     parser.add_argument('--output-dir', help='Directory to use for downloaded files')
+    parser.add_argument('--block-size', type=int, action='append',help='Block size for download')
 
     methods = parser.add_argument_group('Download methods')
     methods.add_argument('--all',action='store_true', help='All download methods')
@@ -27,14 +28,14 @@ def stats(bytes, seconds, url):
     print('    {:5.2f} MB/s, {:5.2f} MB, {:5.2f} seconds, URL: {}'.format(mb/seconds, mb, seconds, url), flush=True)
 
 def time_download(fun, block_size = 0):
-    name = '{}-{:.2f}'.format(fun.__name__,block_size/M)
+    name = '{}-{:.2f}'.format(fun.__name__,block_size)
     print('Timing {}'.format(name))
     total_bytes = 0
     total_seconds = 0
     for url in args.urls:
         file = os.path.join(output_dir,name)
         start = time.time()
-        fun(url, file, block_size)
+        fun(url, file, block_size * M)
         seconds = time.time() - start
         bytes = os.path.getsize(file)
         stats(bytes, seconds, url)
@@ -68,5 +69,8 @@ if __name__ == "__main__":
         if args.null:
             time_download(null)
         if args.request:
-            for block_size in [1 * M, 2 * M, 4 * M, 8 * M, 16 * M]:
+            block_sizes = [1, 2, 4, 8, 16]
+            if args.block_size:
+                block_sizes = args.block_size
+            for block_size in block_sizes:
                 time_download(request, block_size)

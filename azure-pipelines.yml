@@ -7,14 +7,14 @@ trigger:
 
 strategy:
   matrix:
-    linux_online:
-      imageName: 'ubuntu-latest'
-      python_bin: 'python3'
-      url:  $(online_url)
-    windows_online:
-      imageName: 'vs2017-win2016'
-      python_bin: 'C:/Miniconda/python.exe'
-      url:  $(online_url)
+    #linux_online:
+    #  imageName: 'ubuntu-latest'
+    #  python_bin: 'python3'
+    #  url:  $(online_url)
+    #windows_online:
+    #  imageName: 'vs2017-win2016'
+    #  python_bin: 'C:/Miniconda/python.exe'
+    #  url:  $(online_url)
     linux_offline:
       imageName: 'ubuntu-latest'
       python_bin: 'python3'
@@ -28,7 +28,12 @@ strategy:
 pool:
   vmImage: $(imageName)
 
-steps:
-- script: |
-    $(python_bin) speed-test.py --request $(url)
-  displayName: online
+jobs:
+- job: curl
+  steps:
+  - bash: time curl -s -o x $(url)
+      
+- job: python
+  steps:
+  - script: |
+      $(python_bin) speed-test.py --block-size 4 --request $(url)
